@@ -16,7 +16,7 @@ Here's a typical flow for an app start up sequence:
  3. If there's no stored user session, show the sign-up/login UX.
  4. Go to the main app flow (usually some `UINavigationController` within a storyboard).
 
-A common solution to this is to embed some conditional/one-off logic inside the various UIViewControllers involved in the flow and use a `UINavigationController` to push/pop the desired UX elements based on these conditionals. Another way to appraoch this is to use modal controllers, or even replace the `rootViewController` of the key window. All of these approaches result is a spaghetti solution with the actual logic of the startup sequence distributed across multiple source files, hard-to-control transitions and annoying bugs.
+A common solution to this is to embed some conditional/one-off logic inside the various UIViewControllers involved in the flow and use a `UINavigationController` to push/pop the desired UX elements based on these conditionals. Another way to approach this is to use modal controllers, or even replace the `rootViewController` of the key window. All of these approaches result is a spaghetti solution with the actual logic of the startup sequence distributed across multiple source files, hard-to-control transitions and annoying bugs.
 
 Enters `CLHoppingViewController`.
 
@@ -102,7 +102,7 @@ This section describes the recommended usage "receipe" for `CLHoppingViewControl
 In the main storyboard:
 
   1. Add a `UIViewController` with custom class `MyStartupViewController`. Make it the initial view controller of the app.
-  1. Add a `UIViewcontroller` with custom class `MySplashViewController`. Set it's storyboard identifier to `splash`.
+  1. Add a `UIViewController` with custom class `MySplashViewController`. Set it's storyboard identifier to `splash`.
   1. Add a `UIViewController` with custom class `MyOnboardingViewController`. Set it's storyboard identifier to `onboarding`.
   1. Add a `UINavigationController` with a storyboard identifier of `main`.
 
