@@ -31,6 +31,8 @@
 
 - (void)hopToViewController:(UIViewController *)newViewController then:(void(^)(void))block
 {
+    self.nextBlock = block;
+
     UIViewController *oldViewController = [self currentChild];
     
     [oldViewController willMoveToParentViewController:nil];
@@ -46,14 +48,12 @@
         } completion:^(BOOL finished) {
             [oldViewController removeFromParentViewController];
             [newViewController didMoveToParentViewController:self];
-            self.nextBlock = block;
         }];
     }
     else {
         newViewController.view.alpha = 1.0f;
         [self.view addSubview:newViewController.view];
         [newViewController didMoveToParentViewController:self];
-        self.nextBlock = block;
     }
 }
 
