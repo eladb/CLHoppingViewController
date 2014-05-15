@@ -59,6 +59,7 @@
     transition(oldViewController, newViewController, ^(BOOL finished) {
         [oldViewController removeFromParentViewController];
         [newViewController didMoveToParentViewController:self];
+        [self setNeedsStatusBarAppearanceUpdate];
     });
 }
 
