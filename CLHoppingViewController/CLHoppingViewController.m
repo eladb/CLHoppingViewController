@@ -71,6 +71,24 @@
     
     UIViewController *child = self.childViewControllers[self.childViewControllers.count - 1];
     return child;
+#pragma mark - Propogate status bar events to topmost child view controller
+
+- (UIViewController *)childViewControllerForStatusBarStyle
+{
+    if (self.childViewControllers.count == 0) {
+        return [super childViewControllerForStatusBarStyle];
+    }
+    
+    return self.childViewControllers[self.childViewControllers.count - 1];
+}
+
+- (UIViewController *)childViewControllerForStatusBarHidden
+{
+    if (self.childViewControllers.count == 0) {
+        return [super childViewControllerForStatusBarStyle];
+    }
+    
+    return self.childViewControllers[self.childViewControllers.count - 1];
 }
 
 @end
