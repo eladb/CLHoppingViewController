@@ -31,30 +31,35 @@
 
 - (void)hopToViewController:(UIViewController *)newViewController then:(void(^)(void))block
 {
-    self.nextBlock = block;
+    [self hopToViewController:newViewController transition:nil then:block];
+}
 
-    UIViewController *oldViewController = [self currentChild];
+- (void)hopTo:(NSString *)storyboardIdentifier
+   transition:(void(^)(UIViewController *fromViewController, UIViewController *toViewController, void(^completion)(BOOL finished)))transition
+         then:(void(^)(void))block
+{
+    [self hopToViewController:[self.storyboard instantiateViewControllerWithIdentifier:storyboardIdentifier] transition:transition then:block];
+}
+
+- (void)hopToViewController:(UIViewController *)newViewController transition:(CLHoppingViewControllerTransitionBlock)transition then:(void(^)(void))block;
+{
+    self.nextBlock = block;
     
+    // use default transition if not specified
+    if (!transition) {
+        transition = ^(UIViewController *fromViewController, UIViewController *toViewController, void(^completion)(BOOL finished)) {
+            [self animatedTransitionFromViewController:fromViewController toViewController:toViewController completion:completion];
+        };
+    }
+
+    UIViewController *oldViewController = self.currentChildViewController;
     [oldViewController willMoveToParentViewController:nil];
     [self addChildViewController:newViewController];
-    newViewController.view.frame = self.view.bounds;
-    newViewController.view.alpha = 0.0f;
-    
-    // if we have an old view controller, transition to new vc with animation
-    if (oldViewController) {
-        [self transitionFromViewController:oldViewController toViewController:newViewController duration:0.5f options:UIViewAnimationOptionCurveEaseInOut animations:^{
-            oldViewController.view.alpha = 0.0f;
-            newViewController.view.alpha = 1.0f;
-        } completion:^(BOOL finished) {
-            [oldViewController removeFromParentViewController];
-            [newViewController didMoveToParentViewController:self];
-        }];
-    }
-    else {
-        newViewController.view.alpha = 1.0f;
-        [self.view addSubview:newViewController.view];
+    [[self containerViewForChildViewController] addSubview:newViewController.view]; // this replades the animated transition
+    transition(oldViewController, newViewController, ^(BOOL finished) {
+        [oldViewController removeFromParentViewController];
         [newViewController didMoveToParentViewController:self];
-    }
+    });
 }
 
 - (void)unhop
@@ -63,14 +68,41 @@
     self.nextBlock();
 }
 
-- (UIViewController *)currentChild
+- (UIViewController *)currentChildViewController
 {
     if (self.childViewControllers.count == 0) {
         return nil;
     }
     
-    UIViewController *child = self.childViewControllers[self.childViewControllers.count - 1];
-    return child;
+    return self.childViewControllers[self.childViewControllers.count - 1];
+}
+
+#pragma mark - Container
+
+- (UIView *)containerViewForChildViewController
+{
+    return self.view;
+}
+
+#pragma mark - Transitions
+
+- (void)animatedTransitionFromViewController:(UIViewController *)fromViewController toViewController:(UIViewController *)toViewController completion:(void(^)(BOOL finished))completion
+{
+    toViewController.view.frame = self.view.bounds;
+    toViewController.view.alpha = 0.0f;
+    
+    if (fromViewController) {
+        [UIView animateWithDuration:0.25f animations:^{
+            fromViewController.view.alpha = 0.0f;
+            toViewController.view.alpha = 1.0f;
+        } completion:completion];
+    }
+    else {
+        toViewController.view.alpha = 1.0f;
+        completion(YES);
+    }
+}
+
 #pragma mark - Propogate status bar events to topmost child view controller
 
 - (UIViewController *)childViewControllerForStatusBarStyle
