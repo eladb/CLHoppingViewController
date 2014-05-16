@@ -52,14 +52,17 @@
         };
     }
 
+    UIView *containerView = [self containerViewForChildViewController];
     UIViewController *oldViewController = self.currentChildViewController;
     [oldViewController willMoveToParentViewController:nil];
     [self addChildViewController:newViewController];
-    [[self containerViewForChildViewController] addSubview:newViewController.view]; // this replades the animated transition
+    newViewController.view.frame = containerView.bounds;
+    newViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [containerView addSubview:newViewController.view]; // this replades the animated transition
     transition(oldViewController, newViewController, ^(BOOL finished) {
         [oldViewController removeFromParentViewController];
         [newViewController didMoveToParentViewController:self];
-        [self setNeedsStatusBarAppearanceUpdate];
+        [[self containerViewForChildViewController] layoutIfNeeded];
     });
 }
 
