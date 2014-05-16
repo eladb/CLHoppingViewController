@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "CLHoppingViewController"
-  s.version          = "0.1.3"
+  s.version          = "0.1.4"
   s.summary          = "A block-based navigational UIViewController designed for app startup, login and onboarding scenarios"
   s.homepage         = "https://github.com/eladb/CLHoppingViewController"
   s.license          = 'MIT'
