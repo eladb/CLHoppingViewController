@@ -63,6 +63,7 @@
         [oldViewController removeFromParentViewController];
         [newViewController didMoveToParentViewController:self];
         [containerView layoutIfNeeded];
+        [self setNeedsStatusBarAppearanceUpdate];
     });
 }
 
