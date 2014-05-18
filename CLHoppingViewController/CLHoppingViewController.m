@@ -62,7 +62,7 @@
     transition(oldViewController, newViewController, ^(BOOL finished) {
         [oldViewController removeFromParentViewController];
         [newViewController didMoveToParentViewController:self];
-        [[self containerViewForChildViewController] layoutIfNeeded];
+        [containerView layoutIfNeeded];
     });
 }
 
@@ -99,6 +99,7 @@
         [UIView animateWithDuration:0.25f animations:^{
             fromViewController.view.alpha = 0.0f;
             toViewController.view.alpha = 1.0f;
+            [self setNeedsStatusBarAppearanceUpdate];
         } completion:completion];
     }
     else {
@@ -111,20 +112,12 @@
 
 - (UIViewController *)childViewControllerForStatusBarStyle
 {
-    if (self.childViewControllers.count == 0) {
-        return [super childViewControllerForStatusBarStyle];
-    }
-    
-    return self.childViewControllers[self.childViewControllers.count - 1];
+    return self.childViewControllers.lastObject;
 }
 
 - (UIViewController *)childViewControllerForStatusBarHidden
 {
-    if (self.childViewControllers.count == 0) {
-        return [super childViewControllerForStatusBarStyle];
-    }
-    
-    return self.childViewControllers[self.childViewControllers.count - 1];
+    return self.childViewControllers.lastObject;
 }
 
 @end
